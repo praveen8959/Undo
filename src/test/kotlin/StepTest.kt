@@ -16,6 +16,24 @@ internal class StepTest {
     }
 
     @Test
+    fun `execute succeeds only once`() {
+        StatefulStep(SuccessfulAction(), SuccessfulReversal()).also { step ->
+            assertTrue(step.execute())
+            assertThrows<IllegalStateException> { step.execute() }
+        }
+    }
+
+    @Test
+    fun `execute undo`() {
+        StatefulStep(SuccessfulAction(), SuccessfulReversal()).also { step ->
+            assertTrue(step.execute())
+            step.undo()
+            assertThrows<IllegalStateException>{step.execute()}
+            assertThrows<IllegalStateException>{step.undo()}
+        }
+    }
+
+    @Test
     fun `execute fails`() {
         assertFalse(StatefulStep(UnsuccessfulAction(), SuccessfulReversal()).execute())
     }
