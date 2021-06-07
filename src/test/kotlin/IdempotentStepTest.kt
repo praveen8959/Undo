@@ -1,11 +1,13 @@
-package test.kotlin.util
+package test.kotlin
 
 import main.kotlin.IdempotentStep
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import test.kotlin.util.SuccessfulAction
+import test.kotlin.util.SuccessfulReversal
+import test.kotlin.util.UnsuccessfulAction
 
 internal class IdempotentStepTest {
 

@@ -10,12 +10,29 @@ internal class DualAction : Step.Action, Step.Reversal {
 }
 
 internal class SuccessfulAction : Step.Action {
-    override fun execute() = true
+    companion object {
+        internal var totalExecuteCount = 0
+        internal fun reset() {
+            totalExecuteCount = 0
+        }
+    }
+
+    override fun execute() = true.also { totalExecuteCount += 1 }
 
 }
 
 internal class SuccessfulReversal : Step.Reversal {
-    override fun undo() {}
+    companion object {
+        internal var totalUndoCount = 0
+        internal fun reset() {
+            totalUndoCount = 0
+        }
+    }
+
+    override fun undo() {
+        totalUndoCount += 1
+    }
+
 }
 
 internal class UnsuccessfulAction : Step.Action {
