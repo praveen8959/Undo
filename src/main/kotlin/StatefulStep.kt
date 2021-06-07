@@ -15,18 +15,18 @@ class StatefulStep(private val action: Action, private val reversal: Reversal) :
 
     internal inner class Start : State {
         override fun execute() = action.execute().also {
-            state = Executed()
+            state = Complete()
         }
 
         override fun undo() = throw IllegalStateException()
     }
 
-    internal inner class Executed : State {
+    internal inner class Complete : State {
         override fun execute() = throw IllegalStateException()
-        override fun undo() = reversal.undo().also { state = Complete() }
+        override fun undo() = reversal.undo().also { state = Reversed() }
     }
 
-    internal inner class Complete : State {
+    internal inner class Reversed : State {
         override fun execute() = throw IllegalStateException()
         override fun undo() = throw IllegalStateException()
     }

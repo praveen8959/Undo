@@ -1,14 +1,16 @@
 package test.kotlin
 
 import main.kotlin.StatefulStep
-import main.kotlin.Step.Action
-import main.kotlin.Step.Reversal
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import test.kotlin.util.DualAction
+import test.kotlin.util.SuccessfulAction
+import test.kotlin.util.SuccessfulReversal
+import test.kotlin.util.UnsuccessfulAction
 
-internal class StepTest {
+internal class StatefulStepTest {
 
     @Test
     fun `execute succeeds`() {
@@ -17,9 +19,11 @@ internal class StepTest {
 
     @Test
     fun `execute succeeds only once`() {
-        StatefulStep(SuccessfulAction(), SuccessfulReversal()).also { step ->
-            assertTrue(step.execute())
-            assertThrows<IllegalStateException> { step.execute() }
+        DualAction().also { action ->
+            StatefulStep(action, action).also { step ->
+                assertTrue(step.execute())
+                assertThrows<IllegalStateException> { step.execute() }
+            }
         }
     }
 
@@ -34,6 +38,14 @@ internal class StepTest {
     }
 
     @Test
+    fun `execute succeeds but only once`() {
+        StatefulStep(SuccessfulAction(), SuccessfulReversal()).also {
+            assertTrue(it.execute())
+            assertThrows<IllegalStateException> { it.execute() }
+        }
+    }
+
+    @Test
     fun `execute fails`() {
         assertFalse(StatefulStep(UnsuccessfulAction(), SuccessfulReversal()).execute())
     }
@@ -42,20 +54,5 @@ internal class StepTest {
     fun `Undo fails`() {
         assertThrows<IllegalStateException> { StatefulStep(SuccessfulAction(), SuccessfulReversal()).undo() }
     }
-
-
-    internal class SuccessfulAction : Action {
-        override fun execute() = true
-    }
-
-    internal class SuccessfulReversal : Reversal {
-        override fun undo() {}
-    }
-
-    internal class UnsuccessfulAction : Action {
-        override fun execute() = false
-    }
-
-
 }
 
